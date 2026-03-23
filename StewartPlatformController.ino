@@ -36,9 +36,9 @@ static IPAddress STATIC_GATEWAY(192, 168, 1, 1);
 static IPAddress STATIC_SUBNET(255, 255, 255, 0);
 static IPAddress STATIC_DNS(8, 8, 8, 8);
 
-static const uint8_t PCA9685_I2C_ADDRESS = 0x40;
-static const float PCA9685_PWM_FREQUENCY = 50.0f;
-static const uint16_t PCA9685_OSCILLATOR_HZ = 27000000;
+static const uint8_t PCA9685_DRIVER_ADDRESS = 0x40;
+static const float PCA9685_DRIVER_PWM_FREQUENCY = 50.0f;
+static const uint32_t PCA9685_DRIVER_OSCILLATOR_HZ = 27000000UL;
 static const uint16_t HTTP_PORT = 80;
 
 // Placeholder geometry values in millimeters for initial development.
@@ -133,7 +133,7 @@ static const float WORKSPACE_YAW_MAX   =  20.0f;
 // GLOBAL STATE
 // -----------------------------------------------------------------------------
 
-Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(PCA9685_I2C_ADDRESS);
+Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(PCA9685_DRIVER_ADDRESS);
 WiFiServer server(HTTP_PORT);
 SystemState systemState = {false, false, false, true, false, "", "Booting"};
 
@@ -285,8 +285,8 @@ void initializeHardware() {
 void initializeDriver() {
   Serial.println(F("[PCA9685] Initializing servo driver"));
   pwm.begin();
-  pwm.setOscillatorFrequency(PCA9685_OSCILLATOR_HZ);
-  pwm.setPWMFreq(PCA9685_PWM_FREQUENCY);
+  pwm.setOscillatorFrequency(PCA9685_DRIVER_OSCILLATOR_HZ);
+  pwm.setPWMFreq(PCA9685_DRIVER_PWM_FREQUENCY);
   delay(10);
   clearError("Servo driver initialized");
 }
@@ -449,7 +449,7 @@ void writeServoPulse(uint8_t index, uint16_t pulseUs) {
 
   const ServoCalibration &cal = SERVO_CAL[index];
   const uint16_t clampedPulse = constrain(pulseUs, cal.minPulseUs, cal.maxPulseUs);
-  const float microsecondsPerPeriod = 1000000.0f / PCA9685_PWM_FREQUENCY;
+  const float microsecondsPerPeriod = 1000000.0f / PCA9685_DRIVER_PWM_FREQUENCY;
   const float ticksPerMicrosecond = 4096.0f / microsecondsPerPeriod;
   const uint16_t ticks = static_cast<uint16_t>(clampedPulse * ticksPerMicrosecond);
   pwm.setPWM(cal.channel, 0, ticks);
