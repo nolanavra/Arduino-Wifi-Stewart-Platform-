@@ -28,8 +28,8 @@
 // -----------------------------------------------------------------------------
 
 static const uint8_t SERVO_COUNT = 6;
-static const char WIFI_SSID[] = "YOUR_WIFI_SSID";
-static const char WIFI_PASSWORD[] = "YOUR_WIFI_PASSWORD";
+static const char WIFI_SSID[] = "Abnormal Net";
+static const char WIFI_PASSWORD[] = "unevenmango994";
 static const bool USE_STATIC_IP = false;
 static IPAddress STATIC_IP(192, 168, 1, 70);
 static IPAddress STATIC_GATEWAY(192, 168, 1, 1);
