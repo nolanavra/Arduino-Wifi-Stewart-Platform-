@@ -29,9 +29,9 @@
 
 static const uint8_t SERVO_COUNT = 6;
 static const unsigned long SERIAL_BAUD = 115200;
-static const uint8_t PCA9685_I2C_ADDRESS = 0x40;
-static const float PCA9685_PWM_FREQUENCY_HZ = 50.0f;
-static const uint32_t PCA9685_OSCILLATOR_HZ = 27000000UL;
+static const uint8_t PCA9685_DRIVER_ADDRESS = 0x40;
+static const float PCA9685_DRIVER_PWM_FREQUENCY_HZ = 50.0f;
+static const uint32_t PCA9685_DRIVER_OSCILLATOR_HZ = 27000000UL;
 static const unsigned long MOTION_UPDATE_INTERVAL_MS = 20;
 static const float DEFAULT_STEP_DEG = 1.0f;
 static const float DEFAULT_SLEW_DEG_PER_UPDATE = 1.5f;
@@ -62,7 +62,7 @@ static ServoCalibration servoConfig[SERVO_COUNT] = {
 // GLOBAL STATE
 // -----------------------------------------------------------------------------
 
-Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(PCA9685_I2C_ADDRESS);
+Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(PCA9685_DRIVER_ADDRESS);
 
 float currentAngleDeg[SERVO_COUNT] = {90, 90, 90, 90, 90, 90};
 float targetAngleDeg[SERVO_COUNT] = {90, 90, 90, 90, 90, 90};
@@ -146,11 +146,11 @@ void initializeHardware() {
 
 void initializeDriver() {
   pwm.begin();
-  pwm.setOscillatorFrequency(PCA9685_OSCILLATOR_HZ);
-  pwm.setPWMFreq(PCA9685_PWM_FREQUENCY_HZ);
+  pwm.setOscillatorFrequency(PCA9685_DRIVER_OSCILLATOR_HZ);
+  pwm.setPWMFreq(PCA9685_DRIVER_PWM_FREQUENCY_HZ);
   delay(10);
   Serial.print(F("PCA9685 initialized at 0x"));
-  Serial.println(PCA9685_I2C_ADDRESS, HEX);
+  Serial.println(PCA9685_DRIVER_ADDRESS, HEX);
 }
 
 // -----------------------------------------------------------------------------
@@ -587,7 +587,7 @@ uint16_t servoAngleToPulseUs(uint8_t index, float logicalAngleDeg) {
 }
 
 uint16_t pulseUsToTicks(uint16_t pulseUs) {
-  float periodUs = 1000000.0f / PCA9685_PWM_FREQUENCY_HZ;
+  float periodUs = 1000000.0f / PCA9685_DRIVER_PWM_FREQUENCY_HZ;
   float ticks = (4096.0f * pulseUs) / periodUs;
   if (ticks < 0.0f) {
     ticks = 0.0f;
